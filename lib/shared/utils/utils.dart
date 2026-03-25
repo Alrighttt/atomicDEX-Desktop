@@ -190,7 +190,7 @@ Map<String, dynamic>? rat2fract(Rational? rat, [bool toLog = true]) {
 String getTxExplorerUrl(Coin coin, String txHash) {
   final String explorerUrl = coin.explorerUrl;
   final String explorerTxUrl = coin.explorerTxUrl;
-  if (explorerUrl.isEmpty) return '';
+  if (explorerUrl.isEmpty || explorerTxUrl.isEmpty) return '';
 
   final hash =
       coin.type == CoinType.tendermint || coin.type == CoinType.tendermintToken
@@ -205,7 +205,7 @@ String getTxExplorerUrl(Coin coin, String txHash) {
 String getAddressExplorerUrl(Coin coin, String address) {
   final String explorerUrl = coin.explorerUrl;
   final String explorerAddressUrl = coin.explorerAddressUrl;
-  if (explorerUrl.isEmpty) return '';
+  if (explorerUrl.isEmpty || explorerAddressUrl.isEmpty) return '';
 
   return '$explorerUrl$explorerAddressUrl$address';
 }
@@ -334,6 +334,7 @@ String abbr2Ticker(String abbr) {
   const List<String> filteredSuffixes = [
     'TRC20',
     'ERC20',
+    'GRC20',
     'BEP20',
     'QRC20',
     'FTM20',
@@ -401,6 +402,8 @@ Color getProtocolColor(CoinType type) {
       return const Color(0xFF29F06F);
     case CoinType.erc20:
       return const Color.fromRGBO(108, 147, 237, 1);
+    case CoinType.grc20:
+      return const Color(0xFF8C41FF);
     case CoinType.smartChain:
       return const Color.fromRGBO(32, 22, 49, 1);
     case CoinType.bep20:
@@ -448,13 +451,13 @@ bool hasTxHistorySupport(Coin coin) {
       return false;
     case CoinType.trx:
     case CoinType.trc20:
-      return true;
     case CoinType.krc20:
     case CoinType.tendermint:
     case CoinType.tendermintToken:
     case CoinType.utxo:
     case CoinType.sia:
     case CoinType.erc20:
+    case CoinType.grc20:
     case CoinType.smartChain:
     case CoinType.bep20:
     case CoinType.qrc20:
@@ -476,11 +479,15 @@ String getNativeExplorerUrlByCoin(Coin coin, String? address) {
   final bool hasSupport = hasTxHistorySupport(coin);
   final coinAddress = address ?? coin.address;
   assert(!hasSupport);
+  if (coinAddress == null || coinAddress.isEmpty || coin.explorerUrl.isEmpty) {
+    return '';
+  }
+
+  if (coin.explorerAddressUrl.isNotEmpty) {
+    return getAddressExplorerUrl(coin, coinAddress);
+  }
 
   switch (coin.type) {
-    case CoinType.trx:
-    case CoinType.trc20:
-      return '${coin.explorerUrl}address/$coinAddress';
     case CoinType.sbch:
     case CoinType.tendermint:
       return '${coin.explorerUrl}address/$coinAddress';
@@ -493,6 +500,7 @@ String getNativeExplorerUrlByCoin(Coin coin, String? address) {
     case CoinType.utxo:
     case CoinType.smartChain:
     case CoinType.erc20:
+    case CoinType.grc20:
     case CoinType.bep20:
     case CoinType.qrc20:
     case CoinType.ftm20:
@@ -508,6 +516,8 @@ String getNativeExplorerUrlByCoin(Coin coin, String? address) {
     case CoinType.krc20:
     case CoinType.slp:
     case CoinType.sia:
+    case CoinType.trx:
+    case CoinType.trc20:
       return '${coin.explorerUrl}address/$coinAddress';
   }
 }
