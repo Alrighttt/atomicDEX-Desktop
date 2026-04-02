@@ -21,9 +21,7 @@ const String coinsAssetsPath = 'packages/komodo_defi_framework/assets';
 final Uri discordSupportChannelUrl = Uri.parse(
   'mailto:info@gleec.com?subject=GLEEC%20Wallet%20Support',
 );
-final Uri discordInviteUrl = Uri.parse(
-  'https://www.gleec.com/contact',
-);
+final Uri discordInviteUrl = Uri.parse('https://www.gleec.com/contact');
 
 /// Const to define if Bitrefill integration is enabled in the app.
 const bool isBitrefillIntegrationEnabled = false;
@@ -37,6 +35,11 @@ const bool isBitrefillIntegrationEnabled = false;
 ///! Platform and its legal entities do not condone the use of this app for
 ///! trading purposes where it is not legally compliant.
 const bool kShowTradingWarning = false;
+
+/// Controls whether the HD mode warning banner is shown on the wallet page.
+/// TODO: Replace this static flag with conditional visibility once we can
+/// determine whether the wallet has previously been used in legacy mode.
+const bool kShowHdWalletWarningBanner = false;
 
 const Duration kPerformanceLogInterval = Duration(minutes: 1);
 
@@ -79,6 +82,7 @@ Map<String, int> priorityCoinsAbbrMap = {
   'USDT-ERC20': 80,
   'USDT-PLG20': 80,
   'USDT-BEP20': 80,
+  'USDT-TRC20': 80,
 
   // Rank 4: XRP (~$145 billion)
   'XRP': 70,
@@ -119,6 +123,7 @@ const List<String> unauthenticatedUserPriorityTickers = [
   'BTC',
   'KMD',
   'ETH',
+  'TRX',
   'BNB',
   'LTC',
   'DASH',

@@ -118,7 +118,7 @@ class RampFiatProvider extends BaseFiatProvider {
 
       return config.assets
           .map((asset) {
-            final coinType = getCoinType(asset.chain);
+            final coinType = getCoinType(asset.chain, coinSymbol: asset.symbol);
             if (coinType == null) {
               return null;
             }
@@ -289,7 +289,7 @@ class RampFiatProvider extends BaseFiatProvider {
       ).toString(),
       'coin_amount': getFormattedCryptoAmount(
         response[paymentMethod.id]['cryptoAmount'] as String,
-        asset['decimals'] as int,
+        (asset['decimals'] as num).toInt(),
       ),
     };
 
