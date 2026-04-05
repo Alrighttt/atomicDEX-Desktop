@@ -22,11 +22,11 @@ const String lastLoggedInWalletKey = 'last_logged_in_wallet';
 const String hdWalletModePreferenceKey = 'wallet_hd_mode_preference';
 
 // anchor: protocols support
-const String ercTxHistoryUrl = 'https://etherscan.gleec.com/api';
+// Gleec proxy endpoints disabled — replace with your own or leave empty.
+const String ercTxHistoryUrl = '';
 
-const String updateCheckerEndpoint =
-    'https://defistats.gleec.com/api/v3/dex_version';
-const String txByHashUrl = '$ercTxHistoryUrl/v2/transactions_by_hash';
+const String updateCheckerEndpoint = '';
+const String txByHashUrl = '';
 
 const int feedbackMaxLength = 1000;
 const int contactDetailsMaxLength = 100;
@@ -42,9 +42,7 @@ final RegExp telegramUsernameRegex = RegExp(r'^[a-zA-Z0-9_]{5,32}$');
 final RegExp matrixIdRegex = RegExp(
   r'^@[a-zA-Z0-9._=-]+:[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
 );
-final Uri pricesUrlV3 = Uri.parse(
-  'https://prices.gleec.com/api/v2/tickers?expire_at=60',
-);
+final Uri pricesUrlV3 = Uri.parse('');
 
 const int millisecondsIn24H = 86400000;
 
@@ -77,9 +75,8 @@ const int? matomoPlatformDimensionId =
     int.fromEnvironment('MATOMO_PLATFORM_DIMENSION_ID', defaultValue: -1) == -1
     ? null
     : int.fromEnvironment('MATOMO_PLATFORM_DIMENSION_ID');
-const String moralisProxyUrl = 'https://moralis.gleec.com';
-const String nftAntiSpamUrl = 'https://nft-antispam.gleec.com';
+const String moralisProxyUrl = '';
+const String nftAntiSpamUrl = '';
 
-const String geoBlockerApiUrl = 'https://gleec-wallet-bouncer.gleec.com/v1';
-const String tradingBlacklistUrl =
-    'https://defistats.gleec.com/api/v3/utils/blacklist';
+const String geoBlockerApiUrl = '';
+const String tradingBlacklistUrl = '';
