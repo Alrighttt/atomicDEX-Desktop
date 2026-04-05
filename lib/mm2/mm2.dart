@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:komodo_cex_market_data/komodo_cex_market_data.dart';
 import 'package:komodo_defi_sdk/komodo_defi_sdk.dart';
 import 'package:komodo_defi_types/komodo_defi_type_utils.dart';
 import 'package:web_dex/mm2/mm2_api/rpc/version/version_request.dart';
@@ -17,6 +18,14 @@ final class MM2 {
         // TODO: sync pre-activation of coins (show activating coins in list)
         preActivateHistoricalAssets: false,
         preActivateDefaultAssets: false,
+        marketDataConfig: MarketDataConfig(
+          enableKomodoPrice: false,
+          repositoryPriority: [
+            RepositoryType.coinPaprika,
+            RepositoryType.binance,
+            RepositoryType.coinGecko,
+          ],
+        ),
       ),
       onLog: _handleSdkLog,
     );
