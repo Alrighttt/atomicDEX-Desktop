@@ -31,7 +31,6 @@ class SettingsMenu extends StatelessWidget {
           SettingsMenuValue.general,
           if (showSecurity) SettingsMenuValue.security,
           SettingsMenuValue.privacy,
-          SettingsMenuValue.kycPolicy,
           if (context.isFeedbackAvailable) SettingsMenuValue.feedback,
         };
         return FocusTraversalGroup(

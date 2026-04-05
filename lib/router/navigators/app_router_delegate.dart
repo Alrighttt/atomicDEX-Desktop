@@ -226,8 +226,6 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
         return SettingsRoutePath.security();
       case SettingsMenuValue.privacy:
         return SettingsRoutePath.privacy();
-      case SettingsMenuValue.kycPolicy:
-        return SettingsRoutePath.kyc();
       case SettingsMenuValue.support:
         return SettingsRoutePath.support();
       case SettingsMenuValue.feedback:
