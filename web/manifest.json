@@ -1,25 +1,13 @@
 {
-    "name": "GLEEC Wallet",
-    "short_name": "GLEEC Wallet",
+    "name": "GoodDEX",
+    "short_name": "GoodDEX",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#202337",
-    "theme_color": "#8C41FF",
-    "description": "Non-Custodial Multi-Coin Wallet & DEX.",
+    "theme_color": "#7C5CFC",
+    "description": "Non-custodial multi-chain wallet and decentralized exchange.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
-    "related_applications": [
-        {
-            "platform": "play",
-            "url": "https://play.google.com/store/apps/details?id=com.gleec.gleecdex",
-            "id": "com.gleec.gleecdex"
-        },
-        {
-            "platform": "itunes",
-            "url": "https://apps.apple.com/us/app/gleecdex-wallet/id1563795528",
-            "id": "1563795528"
-        }
-    ],
     "icons": [
         {
             "src": "icons/android-chrome-96x96.png",
