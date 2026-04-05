@@ -1,10 +1,9 @@
 # Builds KDF WASM from GPL-2.0 source, builds the Flutter web app, and
-# deploys to GitHub Pages.
+# deploys to Cloudflare Pages.
 #
-# Uses the non-wasm Dart build (dart2js) because GitHub Pages cannot set
-# COOP/COEP headers. The KDF engine WASM is built from source and works
-# regardless.
-name: Deploy to GitHub Pages
+# Cloudflare supports custom headers, so we CAN use the --wasm Dart build
+# for better performance. The _headers file sets COOP/COEP.
+name: Deploy to Cloudflare Pages
 
 on:
   push:
@@ -12,17 +11,8 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
-
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout with submodules
@@ -79,49 +69,38 @@ jobs:
           flutter clean
           rm -rf build/*
 
-      # First build — generates coin assets. KDF WASM is already in place.
       - name: Generate assets (first build)
         timeout-minutes: 20
         env:
           GITHUB_API_PUBLIC_READONLY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           flutter pub get || true
-          flutter build web --release --csp --no-web-resources-cdn \
-            --base-href /${{ github.event.repository.name }}/ \
+          flutter build web --release --wasm --csp --no-web-resources-cdn \
             --dart-define=ANALYTICS_DISABLED=true \
             --dart-define=COMMIT_HASH=$(git rev-parse --short HEAD) \
             --dart-define=BUILD_DATE=$(date -u '+%Y-%m-%dT%H:%MZ') \
             || true
           find build -mindepth 1 -maxdepth 1 ! -name 'native_assets' -exec rm -rf {} + 2>/dev/null || true
 
-      # Second build — assets registered in AssetManifest.bin.
       - name: Build web (second build)
         timeout-minutes: 20
         env:
           GITHUB_API_PUBLIC_READONLY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           flutter pub get
-          flutter build web --release --csp --no-web-resources-cdn \
-            --base-href /${{ github.event.repository.name }}/ \
+          flutter build web --release --wasm --csp --no-web-resources-cdn \
             --dart-define=ANALYTICS_DISABLED=true \
             --dart-define=COMMIT_HASH=$(git rev-parse --short HEAD) \
             --dart-define=BUILD_DATE=$(date -u '+%Y-%m-%dT%H:%MZ')
 
-      - name: Add SPA fallback
-        run: cp build/web/index.html build/web/404.html
+      - name: Copy Cloudflare config
+        run: |
+          cp web/_headers build/web/_headers
+          cp web/_redirects build/web/_redirects
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
         with:
-          path: build/web
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy build/web --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME || 'gleec-wallet' }}
