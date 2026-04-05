@@ -4,7 +4,6 @@ import 'package:web_dex/generated/codegen_loader.g.dart';
 enum MainMenuValue {
   wallet,
   dex,
-  fiat,
   bridge,
   marketMakerBot,
   nft,
@@ -27,7 +26,6 @@ enum MainMenuValue {
       case MainMenuValue.marketMakerBot:
         return true;
       case MainMenuValue.wallet:
-      case MainMenuValue.fiat:
       case MainMenuValue.nft:
       case MainMenuValue.settings:
       case MainMenuValue.support:
@@ -41,8 +39,6 @@ enum MainMenuValue {
     switch (this) {
       case MainMenuValue.wallet:
         return LocaleKeys.wallet.tr();
-      case MainMenuValue.fiat:
-        return LocaleKeys.fiat.tr();
       case MainMenuValue.dex:
         return LocaleKeys.swap.tr();
       case MainMenuValue.bridge:
@@ -69,7 +65,6 @@ enum MainMenuValue {
       case MainMenuValue.none:
       case MainMenuValue.bridge:
         return false;
-      case MainMenuValue.fiat:
       case MainMenuValue.marketMakerBot:
       case MainMenuValue.nft:
         return true;
@@ -82,14 +77,12 @@ enum MainMenuValue {
         return 0;
       case MainMenuValue.dex:
         return 1;
-      case MainMenuValue.fiat:
-        return 2;
       case MainMenuValue.bridge:
-        return 3;
+        return 2;
       case MainMenuValue.nft:
-        return 4;
+        return 3;
       case MainMenuValue.settings:
-        return 5;
+        return 4;
       case MainMenuValue.marketMakerBot:
         return 6;
       case MainMenuValue.support:

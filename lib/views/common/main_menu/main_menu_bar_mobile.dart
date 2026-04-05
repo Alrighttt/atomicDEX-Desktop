@@ -79,16 +79,6 @@ class MainMenuBarMobile extends StatelessWidget {
                   ),
                   Expanded(
                     child: Tooltip(
-                      message: walletOnlyTooltipMessage(),
-                      child: MainMenuBarMobileItem(
-                        value: MainMenuValue.fiat,
-                        enabled: currentWallet?.isHW != true,
-                        isActive: selected == MainMenuValue.fiat,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Tooltip(
                       message: tradingTooltipMessage(),
                       child: MainMenuBarMobileItem(
                         value: MainMenuValue.bridge,

@@ -2,7 +2,6 @@ class FirstUriSegment {
   FirstUriSegment();
 
   final String wallet = 'wallet';
-  final String fiat = 'fiat';
   final String dex = 'dex';
   final String bridge = 'bridge';
   final String nfts = 'nfts';

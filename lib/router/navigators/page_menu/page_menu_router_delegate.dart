@@ -5,7 +5,6 @@ import 'package:web_dex/router/routes.dart';
 import 'package:web_dex/router/state/routing_state.dart';
 import 'package:web_dex/views/bridge/bridge_page.dart';
 import 'package:web_dex/views/dex/dex_page.dart';
-import 'package:web_dex/views/fiat/fiat_page.dart';
 import 'package:web_dex/views/market_maker_bot/market_maker_bot_page.dart';
 import 'package:web_dex/views/nfts/nft_page.dart';
 import 'package:web_dex/views/settings/settings_page.dart';
@@ -26,8 +25,6 @@ class PageMenuRouterDelegate extends RouterDelegate<AppRoutePath>
           coinAbbr: routingState.walletState.selectedCoin,
           action: routingState.walletState.coinsManagerAction,
         );
-      case MainMenuValue.fiat:
-        return isMobile ? const FiatPage() : empty;
       case MainMenuValue.dex:
         return isMobile ? const DexPage() : empty;
       case MainMenuValue.bridge:

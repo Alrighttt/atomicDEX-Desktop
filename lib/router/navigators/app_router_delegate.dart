@@ -11,7 +11,6 @@ import 'package:web_dex/model/settings_menu_value.dart';
 import 'package:web_dex/router/routes.dart';
 import 'package:web_dex/router/state/bridge_section_state.dart';
 import 'package:web_dex/router/state/dex_state.dart';
-import 'package:web_dex/router/state/fiat_state.dart';
 import 'package:web_dex/router/state/market_maker_bot_state.dart';
 import 'package:web_dex/router/state/nfts_state.dart';
 import 'package:web_dex/router/state/routing_state.dart';
@@ -76,8 +75,6 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
 
     if (configurationToSet is WalletRoutePath) {
       _setNewWalletRoutePath(configurationToSet);
-    } else if (configurationToSet is FiatRoutePath) {
-      _setNewFiatRoutePath(configurationToSet);
     } else if (configurationToSet is DexRoutePath) {
       _setNewDexRoutePath(configurationToSet);
     } else if (configurationToSet is BridgeRoutePath) {
@@ -116,12 +113,6 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
     routingState.nftsState.pageState = path.pageState;
   }
 
-  void _setNewFiatRoutePath(FiatRoutePath path) {
-    routingState.selectedMenu = MainMenuValue.fiat;
-    routingState.fiatState.action = path.action;
-    routingState.fiatState.uuid = path.uuid;
-  }
-
   void _setNewDexRoutePath(DexRoutePath path) {
     routingState.selectedMenu = MainMenuValue.dex;
     routingState.dexState.action = path.action;
@@ -147,7 +138,6 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
   Map<MainMenuValue, AppRoutePath> get _menuConfiguration {
     return {
       MainMenuValue.wallet: _currentWalletConfiguration,
-      MainMenuValue.fiat: _currentFiatConfiguration,
       MainMenuValue.dex: _currentDexConfiguration,
       MainMenuValue.bridge: _currentBridgeConfiguration,
       MainMenuValue.marketMakerBot: _currentMarketMakerBotConfiguration,
@@ -171,17 +161,6 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
       return WalletRoutePath.action(routingState.walletState.action);
     }
     return WalletRoutePath.wallet();
-  }
-
-  AppRoutePath get _currentFiatConfiguration {
-    if (routingState.fiatState.action == FiatAction.tradingDetails) {
-      return FiatRoutePath.swapDetails(
-        routingState.fiatState.action,
-        routingState.fiatState.uuid,
-      );
-    }
-
-    return FiatRoutePath.fiat();
   }
 
   AppRoutePath get _currentDexConfiguration {

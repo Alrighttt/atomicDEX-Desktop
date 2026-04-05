@@ -2,7 +2,6 @@ import 'package:web_dex/model/first_uri_segment.dart';
 import 'package:web_dex/model/settings_menu_value.dart';
 import 'package:web_dex/router/state/bridge_section_state.dart';
 import 'package:web_dex/router/state/dex_state.dart';
-import 'package:web_dex/router/state/fiat_state.dart';
 import 'package:web_dex/router/state/market_maker_bot_state.dart';
 import 'package:web_dex/router/state/nfts_state.dart';
 
@@ -23,17 +22,6 @@ class WalletRoutePath implements AppRoutePath {
 
   @override
   final String location;
-}
-
-class FiatRoutePath implements AppRoutePath {
-  FiatRoutePath.fiat() : location = '/${firstUriSegment.fiat}', uuid = '';
-  FiatRoutePath.swapDetails(this.action, this.uuid)
-    : location = '/${firstUriSegment.fiat}/trading_details/$uuid';
-
-  @override
-  final String location;
-  final String uuid;
-  FiatAction action = FiatAction.none;
 }
 
 class DexRoutePath implements AppRoutePath {
