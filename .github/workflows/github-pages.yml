@@ -1,0 +1,91 @@
+# Builds the web app and deploys it to GitHub Pages.
+# Triggered on pushes to `main`. Can also be run manually.
+#
+# Uses the non-wasm build (dart2js) because GitHub Pages cannot set the
+# Cross-Origin-Embedder-Policy / Cross-Origin-Opener-Policy headers that
+# SharedArrayBuffer (and therefore Dart-to-WASM) requires.
+# The KDF engine WASM binary is unaffected — it works on both build modes.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.41.4"
+          channel: stable
+
+      - name: Clean
+        run: |
+          flutter clean
+          rm -rf build/*
+
+      # First build — triggers asset transformer to download KDF WASM + coin
+      # icons. The build itself may fail, but the downloads happen.
+      - name: Generate assets (first build)
+        env:
+          GITHUB_API_PUBLIC_READONLY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          flutter pub get --enforce-lockfile || true
+          flutter build web --release --csp --no-web-resources-cdn \
+            --base-href /${{ github.event.repository.name }}/ \
+            --dart-define=ANALYTICS_DISABLED=true \
+            --dart-define=COMMIT_HASH=$(git rev-parse --short HEAD) \
+            --dart-define=BUILD_DATE=$(date -u '+%Y-%m-%dT%H:%MZ') \
+            > /dev/null 2>&1 || true
+          find build -mindepth 1 -maxdepth 1 ! -name 'native_assets' -exec rm -rf {} + 2>/dev/null || true
+
+      # Second build — assets are now registered in AssetManifest.bin.
+      - name: Build web (second build)
+        env:
+          GITHUB_API_PUBLIC_READONLY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          flutter pub get --enforce-lockfile
+          flutter build web --release --csp --no-web-resources-cdn \
+            --base-href /${{ github.event.repository.name }}/ \
+            --dart-define=ANALYTICS_DISABLED=true \
+            --dart-define=COMMIT_HASH=$(git rev-parse --short HEAD) \
+            --dart-define=BUILD_DATE=$(date -u '+%Y-%m-%dT%H:%MZ')
+
+      # SPA routing fallback — GitHub Pages serves 404.html on unknown paths,
+      # which loads the Flutter app and lets the client-side router handle it.
+      - name: Add SPA fallback
+        run: cp build/web/index.html build/web/404.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
